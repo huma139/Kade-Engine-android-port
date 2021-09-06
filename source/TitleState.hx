@@ -56,10 +56,10 @@ class TitleState extends MusicBeatState
 		polymod.Polymod.init({modRoot: "mods", dirs: ['introMod']});
 		#end
 		
-		// #if sys
-		// if (!sys.FileSystem.exists(#if android Main.path #else Sys.getCwd() #end + "/assets/replays"))
-		// 	sys.FileSystem.createDirectory(#if android Main.path #else Sys.getCwd() #end + "/assets/replays");
-		// #end
+		#if sys
+		if (!sys.FileSystem.exists(#if android Main.path #else Sys.getCwd() #end + "/assets/replays"))
+			sys.FileSystem.createDirectory(#if android Main.path #else Sys.getCwd() #end + "/assets/replays");
+		#end
 
 		@:privateAccess
 		{
@@ -90,11 +90,9 @@ class TitleState extends MusicBeatState
 		trace('NEWGROUNDS LOL');
 		#end
 
-		#if (!cpp || android)
 		PlayerSettings.init();
 		FlxG.save.bind('funkin', 'ninjamuffin99');
 		KadeEngineData.initSave();
-		#end
 
 		Highscore.load();
 

@@ -203,7 +203,7 @@ class PauseSubState extends MusicBeatSubstate
 		var rightP = controls.RIGHT_P;
 		var oldOffset:Float = 0;
 		var songPath = 'assets/data/' + PlayState.SONG.song.toLowerCase() + '/';
-		else if (leftP)
+		if (leftP)
 		{
 			oldOffset = PlayState.songOffset;
 			PlayState.songOffset -= 1;
