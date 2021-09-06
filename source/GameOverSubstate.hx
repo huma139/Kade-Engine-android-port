@@ -1,5 +1,8 @@
 package;
 
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import flixel.addons.ui.FlxUIButton;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSubState;
@@ -13,6 +16,8 @@ class GameOverSubstate extends MusicBeatSubstate
 	var camFollow:FlxObject;
 
 	var stageSuffix:String = "";
+
+	var backB:FlxUIButton;
 
 	public function new(x:Float, y:Float)
 	{
@@ -47,40 +52,54 @@ class GameOverSubstate extends MusicBeatSubstate
 
 		bf.playAnim('firstDeath');
 
+		#if android
+		backB = new FlxUIButton(50, 50);
+		backB.loadGraphic(Paths.image("back_white"));
+		backB.scrollFactor.set();
+		add(backB);
+		backB.alpha = 0;
+		#end
+
 	}
+
+	var yeaTouchIt:Bool = false;
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
 		var yea = controls.ACCEPT;
-		var nah = controls.BACK #if android || FlxG.android.justReleased.BACK #end;
+		var nah = controls.BACK #if android || FlxG.android.justReleased.BACK || backB.justPressed #end;
 		
-		#if android
-		for (touch in FlxG.touches.list)
+		if (yeaTouchIt && !isEnding)
 		{
-			if (touch.justPressed)
+			#if android
+			for (touch in FlxG.touches.list)
 			{
-				yea = true;
+				if (touch.justPressed && !backB.justPressed)
+				{
+					yea = true;
+				}
+			}
+			#end
+
+			if (yea)
+			{
+				endBullshit();
+			}
+
+			if (nah)
+			{
+				FlxG.sound.music.stop();
+
+				if (PlayState.isStoryMode)
+					FlxG.switchState(new StoryMenuState());
+				else
+					FlxG.switchState(new FreeplayState());
+				PlayState.loadRep = false;
 			}
 		}
-		#end
-
-		if (yea)
-		{
-			endBullshit();
-		}
-
-		if (nah)
-		{
-			FlxG.sound.music.stop();
-
-			if (PlayState.isStoryMode)
-				FlxG.switchState(new StoryMenuState());
-			else
-				FlxG.switchState(new FreeplayState());
-			PlayState.loadRep = false;
-		}
+		
 
 		if (bf.animation.curAnim.name == 'firstDeath' && bf.animation.curAnim.curFrame == 12)
 		{
@@ -89,7 +108,9 @@ class GameOverSubstate extends MusicBeatSubstate
 
 		if (bf.animation.curAnim.name == 'firstDeath' && bf.animation.curAnim.finished)
 		{
+			yeaTouchIt = true;
 			FlxG.sound.playMusic(Paths.music('gameOver' + stageSuffix));
+			FlxTween.tween(backB, {alpha: 1}, Conductor.crochet/1000, {ease: FlxEase.quadOut});
 		}
 
 		if (FlxG.sound.music.playing)
@@ -109,19 +130,17 @@ class GameOverSubstate extends MusicBeatSubstate
 
 	function endBullshit():Void
 	{
-		if (!isEnding)
+		isEnding = true;
+		bf.playAnim('deathConfirm', true);
+		FlxG.sound.music.stop();
+		FlxG.sound.play(Paths.music('gameOverEnd' + stageSuffix));
+		new FlxTimer().start(0.7, function(tmr:FlxTimer)
 		{
-			isEnding = true;
-			bf.playAnim('deathConfirm', true);
-			FlxG.sound.music.stop();
-			FlxG.sound.play(Paths.music('gameOverEnd' + stageSuffix));
-			new FlxTimer().start(0.7, function(tmr:FlxTimer)
+			FlxG.camera.fade(FlxColor.BLACK, 2, false, function()
 			{
-				FlxG.camera.fade(FlxColor.BLACK, 2, false, function()
-				{
-					LoadingState.loadAndSwitchState(new PlayState());
-				});
+				LoadingState.loadAndSwitchState(new PlayState());
 			});
-		}
+		});
+		
 	}
 }
