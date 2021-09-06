@@ -1,4 +1,6 @@
-My attemp to port Kade Engine on Android. At first it was for one of my mod but since I tried too hard to figure it out how it all works (yes im dumb) and it works so im just gonna upload to github for archive.
+My attempt to port Kade Engine on Android. At first it was for one of my mod but since I tried too hard to figure it out how it all works (yes im dumb) and it works so im just gonna upload to github for archive.
+
+i want this to be compatiple with both windows, html5 and android
 
 Note that this is version 1.5.2 of KE, newer version got more wacky stuff so i cant figure it out yet
 
