@@ -19,6 +19,8 @@ you can do these below if you wanna make sure that your phone can do this
  - run command `adb devices`
  - check if there's any phone that recognize (it will list the device code when it got recognize), if it does then you're good to go
 
+or you can do `lime test android -emulator` to run it on emulator device. (you have to install a device on avd manager on android studio first)
+
 # Credits
 ### Friday Night Funkin'
  - [ninjamuffin99](https://twitter.com/ninja_muffin99) - Programming
